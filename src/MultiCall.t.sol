@@ -2,13 +2,13 @@ pragma solidity ^0.4.24;
 
 import "ds-test/test.sol";
 
-import "./Multicall.sol";
+import "./MultiCall.sol";
 
-contract MulticallTest is DSTest {
-    Multicall multicall;
+contract MultiCallTest is DSTest {
+    MultiCall multicall;
 
     function setUp() public {
-        multicall = new Multicall();
+        multicall = new MultiCall();
     }
 
     function testFail_basic_sanity() public {
