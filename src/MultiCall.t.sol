@@ -1,7 +1,6 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.4.23;
 
 import "ds-test/test.sol";
-
 import "./MultiCall.sol";
 
 contract Store {
@@ -12,26 +11,20 @@ contract Store {
 
 contract MultiCallTest is DSTest {
     MultiCall multicall;
-    Store         store;
+    Store        storeA;
+    Store        storeB;
 
     function setUp() public {
         multicall = new MultiCall();
-        store     = new Store();
+        storeA    = new Store();
+        storeB    = new Store();
     }
 
     function test_store_basic_sanity() public {
-        assertEq(store.get(), 0);
-        store.set(100);
-        assertEq(store.get(), 100);
-        store.set(0);
-        assertEq(store.get(), 0);
-    }
-
-    function test_single_call() public {
-        store.set(123);
-
-        bytes4  sig = bytes4(keccak256("get()"));
-        uint256 ret = multicall.multiCallTest(store, sig);
-        assertEq(ret, 123);
+        assertEq(storeA.get(), 0);
+        storeA.set(100);
+        assertEq(storeA.get(), 100);
+        storeA.set(0);
+        assertEq(storeA.get(), 0);
     }
 }

@@ -1,30 +1,35 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.4.23;
 
-/// @title Multi Call - Batch multiple constant function calls into one
+/// @title MultiCall - Aggregate multiple constant function calls into one
 /// @author Michael Elliot - <mike@makerdao.com>
 /// @author Joshua Levine - <joshua@makerdao.com>
 
 contract MultiCall {
-    function multiCallTest(address scAddress, bytes4 sig) public view returns (uint result) {
+    function aggregate(bytes data) public view returns (bytes) {
+        uint256 malloc;
+        assembly { malloc := add(mul(mload(add(data, 0x20)), 0x20), 0x20) }
+        bytes memory tempBytes = new bytes(malloc);
+        uint256 _block = block.number;
         assembly {
-            let ptr := mload(0x40) // Move pointer to free memory spot
-            mstore(ptr, sig) // Put function sig at memory spot
+            mstore(add(tempBytes, 0x20), _block)
+            let ptr := mload(0x40)
+            let cur := 0x40
+            let inc := 2
+            let len := mload(data)
 
-            let r := call(
-                60000, // Gas limit
-                scAddress, // Contract address
-                0, // No transfer of eth
-                ptr, // Inputs are stored at location ptr
-                0x24, // Inputs are 36 bytes long
-                ptr, // Store output over input
-                0x20) // Outputs are 32 bytes long
-
-            if eq(r, 0) {
-                revert(0, 0)
+            for { } lt(cur, len) { } {
+                let _target     := mload(add(data, cur))
+                let _retLen     := mul(mload(add(data, add(cur, 0x20))), 0x20)
+                let _dataLength := mload(add(data, add(cur, 0x60)))
+                let _data       := add(data, add(cur, 0x80))
+                if eq(call(gas, _target, 0, _data, _dataLength, ptr, _retLen), 0)
+                    { revert(0, 0) }
+                let _retVal := mload(ptr)
+                mstore(add(tempBytes, mul(inc, 0x20)), _retVal)
+                inc := add(inc, 1)
+                cur := add(cur, add(0x80, _dataLength))
             }
-
-            result := mload(ptr) // Assign output to result var
-            mstore(0x40,add(ptr, 0x24)) // Set storage pointer to new space
         }
+        return tempBytes;
     }
 }
