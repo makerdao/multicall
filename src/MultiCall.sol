@@ -25,7 +25,7 @@ contract MultiCall {
                 let _retLen     := mul(mload(add(data, add(cur, 0x20))), 0x20)
                 let _dataLength := mload(add(data, add(cur, 0x60)))
                 let _data       := add(data, add(cur, 0x80))
-                if eq(call(gas, _target, 0, _data, _dataLength, ptr, _retLen), 0)
+                if eq(staticcall(gas, _target, _data, _dataLength, ptr, _retLen), 0)
                     { revert(0, 0) }
                 let _retVal := mload(ptr)
                 mstore(add(tempBytes, mul(inc, 0x20)), _retVal)
