@@ -5,6 +5,9 @@ pragma solidity ^0.4.23;
 /// @author Joshua Levine - <joshua@makerdao.com>
 
 contract MultiCall {
+    function ethBalanceOf(address addr) public view returns (uint256) {
+        return addr.balance;
+    }
     function aggregate(bytes data) public view returns (bytes) {
         uint256 malloc;
         assembly { malloc := add(mul(mload(add(data, 0x20)), 0x20), 0x20) }
