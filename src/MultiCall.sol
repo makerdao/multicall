@@ -27,9 +27,9 @@ contract MultiCall {
                 let _data       := add(data, add(cur, 0x80))
                 if eq(staticcall(gas, _target, _data, _dataLength, ptr, _retLen), 0)
                     { revert(0, 0) }
-                let _retVal := mload(ptr)
-                mstore(add(tempBytes, mul(inc, 0x20)), _retVal)
-                inc := add(inc, 1)
+                for { let offset := 0 } lt(offset, _retLen) { offset := add(offset, 0x20) } 
+                    { mstore(add(tempBytes, add(mul(inc, 0x20), offset)), mload(add(ptr, offset))) }
+                inc := add(inc, mload(add(data, add(cur, 0x20))))
                 cur := add(cur, add(0x80, _dataLength))
             }
         }
