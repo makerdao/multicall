@@ -1,4 +1,4 @@
-pragma solidity ^0.4.23;
+pragma solidity ^0.4.24;
 
 /// @title MultiCall - Aggregate multiple constant function calls into one
 /// @author Michael Elliot - <mike@makerdao.com>
