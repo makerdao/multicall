@@ -6,7 +6,10 @@ pragma solidity ^0.4.25;
 /// @author Joshua Levine - <joshua@makerdao.com>
 
 contract MulticallHelper {
-    function ethBalanceOf(address addr) public view returns (uint256) {
+    function getEthBalance(address addr) public view returns (uint256) {
         return addr.balance;
+    }
+    function getBlockHash(uint256 blockNumber) public view returns (bytes32) {
+        return blockhash(blockNumber);
     }
 }
