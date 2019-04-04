@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 import "ds-test/test.sol";
-import "./MultiCall.sol";
+import "./Multicall.sol";
 import "./BytesLib.sol";
 
 contract Store {
@@ -24,9 +24,9 @@ contract Utils {
     }
 }
 
-// we inherit from multicall rather than deploy an instance
-// b/c solidity can't return dynamically sized byte arrays from external contracts
-contract MultiCallTest is DSTest, MultiCall, Utils {
+// We inherit from Multicall rather than deploy an instance because solidity
+// can't return dynamically sized byte arrays from external contracts
+contract MulticallTest is DSTest, Multicall, Utils {
     using BytesLib for bytes;
 
     Store public storeA;
@@ -56,24 +56,24 @@ contract MultiCallTest is DSTest, MultiCall, Utils {
         bytes memory _result    = aggregate(_data);
         bytes memory _finalWord = _result.slice(32, 32);
         uint256 _returnVal;
-        assembly { _returnVal := mload(add(0x20, _finalWord)) } 
+        assembly { _returnVal := mload(add(0x20, _finalWord)) }
         assertEq(_returnVal, 123);
     }
 
     function test_multi_call_single_return_no_args() public {
         storeA.set(123);
         storeB.set(321);
-        bytes memory _data = toBytesUint(2) 
-            .concat(toBytesAddress(storeA))  
-            .concat(toBytesUint(1))        
-            .concat(toBytesUint(64))       
-            .concat(toBytesUint(4))         
+        bytes memory _data = toBytesUint(2)
+            .concat(toBytesAddress(storeA))
+            .concat(toBytesUint(1))
+            .concat(toBytesUint(64))
+            .concat(toBytesUint(4))
             .concat(abi.encodeWithSignature("get()"))
-            .concat(toBytesAddress(storeB))  
-            .concat(toBytesUint(1))        
-            .concat(toBytesUint(64))       
-            .concat(toBytesUint(4))         
-            .concat(abi.encodeWithSignature("get()")); 
+            .concat(toBytesAddress(storeB))
+            .concat(toBytesUint(1))
+            .concat(toBytesUint(64))
+            .concat(toBytesUint(4))
+            .concat(abi.encodeWithSignature("get()"));
 
         bytes memory _result     = aggregate(_data);
         bytes memory _secondWord = _result.slice(32, 32);
@@ -81,43 +81,43 @@ contract MultiCallTest is DSTest, MultiCall, Utils {
 
         uint256 _returnValA;
         uint256 _returnValB;
-        assembly { 
-            _returnValA := mload(add(0x20, _secondWord)) 
-            _returnValB := mload(add(0x20, _finalWord)) 
-        } 
+        assembly {
+            _returnValA := mload(add(0x20, _secondWord))
+            _returnValB := mload(add(0x20, _finalWord))
+        }
         assertEq(_returnValA, 123);
         assertEq(_returnValB, 321);
     }
 
     function test_single_call_single_return_single_arg() public {
         storeA.set(123);
-        bytes memory _data = toBytesUint(1) 
-            .concat(toBytesAddress(storeA)) 
-            .concat(toBytesUint(1))         
-            .concat(toBytesUint(64))        
-            .concat(toBytesUint(36))      
-            .concat(abi.encodeWithSignature("getAdd(uint256)", 1)); 
+        bytes memory _data = toBytesUint(1)
+            .concat(toBytesAddress(storeA))
+            .concat(toBytesUint(1))
+            .concat(toBytesUint(64))
+            .concat(toBytesUint(36))
+            .concat(abi.encodeWithSignature("getAdd(uint256)", 1));
 
         bytes memory _result    = aggregate(_data);
         bytes memory _finalWord = _result.slice(32, 32);
         uint256 _returnVal;
-        assembly { _returnVal := mload(add(0x20, _finalWord)) } 
+        assembly { _returnVal := mload(add(0x20, _finalWord)) }
         assertEq(_returnVal, 124);
     }
 
     function test_multi_call_single_return_single_arg() public {
         storeA.set(123);
         storeB.set(321);
-        bytes memory _data = toBytesUint(2) 
-            .concat(toBytesAddress(storeA)) 
-            .concat(toBytesUint(1))         
-            .concat(toBytesUint(64))        
-            .concat(toBytesUint(36))      
+        bytes memory _data = toBytesUint(2)
+            .concat(toBytesAddress(storeA))
+            .concat(toBytesUint(1))
+            .concat(toBytesUint(64))
+            .concat(toBytesUint(36))
             .concat(abi.encodeWithSignature("getAdd(uint256)", 1))
-            .concat(toBytesAddress(storeB)) 
-            .concat(toBytesUint(1))         
-            .concat(toBytesUint(64))        
-            .concat(toBytesUint(36))      
+            .concat(toBytesAddress(storeB))
+            .concat(toBytesUint(1))
+            .concat(toBytesUint(64))
+            .concat(toBytesUint(36))
             .concat(abi.encodeWithSignature("getAdd(uint256)", 1));
 
         bytes memory _result     = aggregate(_data);
@@ -126,21 +126,21 @@ contract MultiCallTest is DSTest, MultiCall, Utils {
 
         uint256 _returnValA;
         uint256 _returnValB;
-        assembly { 
-            _returnValA := mload(add(0x20, _secondWord)) 
-            _returnValB := mload(add(0x20, _finalWord)) 
-        } 
+        assembly {
+            _returnValA := mload(add(0x20, _secondWord))
+            _returnValB := mload(add(0x20, _finalWord))
+        }
         assertEq(_returnValA, 124);
         assertEq(_returnValB, 322);
     }
 
     function test_single_call_multi_return_no_args() public {
         storeA.set(123);
-        bytes memory _data = toBytesUint(2) 
-            .concat(toBytesAddress(storeA)) 
-            .concat(toBytesUint(2))         
-            .concat(toBytesUint(64))        
-            .concat(toBytesUint(4))      
+        bytes memory _data = toBytesUint(2)
+            .concat(toBytesAddress(storeA))
+            .concat(toBytesUint(2))
+            .concat(toBytesUint(64))
+            .concat(toBytesUint(4))
             .concat(abi.encodeWithSignature("getAnd10()"));
 
         bytes memory _result     = aggregate(_data);
@@ -149,10 +149,10 @@ contract MultiCallTest is DSTest, MultiCall, Utils {
 
         uint256 _returnValA1;
         uint256 _returnValA2;
-        assembly { 
-            _returnValA1 := mload(add(0x20, _secondWord)) 
-            _returnValA2 := mload(add(0x20, _finalWord)) 
-        } 
+        assembly {
+            _returnValA1 := mload(add(0x20, _secondWord))
+            _returnValA2 := mload(add(0x20, _finalWord))
+        }
         assertEq(_returnValA1, 123);
         assertEq(_returnValA2, 10);
     }

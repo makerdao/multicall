@@ -4,7 +4,7 @@ pragma solidity ^0.4.24;
 /// @author Michael Elliot - <mike@makerdao.com>
 /// @author Joshua Levine - <joshua@makerdao.com>
 
-contract MultiCall {
+contract Multicall {
     function aggregate(bytes memory data) public view returns (bytes memory) {
         uint256 malloc;
         assembly { malloc := add(mul(mload(add(data, 0x20)), 0x20), 0x20) }
