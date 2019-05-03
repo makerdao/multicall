@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity >=0.4.25;
 
 import "ds-test/test.sol";
 import "./Multicall.sol";
@@ -13,12 +13,12 @@ contract Store {
 }
 
 contract Utils {
-    function toBytesUint(uint256 x) returns (bytes b) {
+    function toBytesUint(uint256 x) public pure returns (bytes memory b) {
         b = new bytes(32);
         assembly { mstore(add(b, 32), x) }
     }
 
-    function toBytesAddress(address x) returns (bytes b) {
+    function toBytesAddress(address x) public pure returns (bytes memory b) {
         b = new bytes(32);
         assembly { mstore(add(b, 32), x) }
     }
@@ -47,12 +47,12 @@ contract MulticallTest is DSTest, Multicall, Utils {
 
     function test_single_call_single_return_no_args() public {
         storeA.set(123);
-        bytes memory _data = toBytesUint(1) // total number of return vals
-            .concat(toBytesAddress(storeA)) // target address
-            .concat(toBytesUint(1))         // number return vals for the next call
-            .concat(toBytesUint(64))        // location of calldata
-            .concat(toBytesUint(4))         // length of call data
-            .concat(abi.encodeWithSignature("get()")); // method selector
+        bytes memory _data = toBytesUint(1)             // total number of return vals
+            .concat(toBytesAddress(address(storeA)))    // target address
+            .concat(toBytesUint(1))                     // number return vals for the next call
+            .concat(toBytesUint(64))                    // location of calldata
+            .concat(toBytesUint(4))                     // length of call data
+            .concat(abi.encodeWithSignature("get()"));  // method selector
         bytes memory _result    = aggregate(_data);
         bytes memory _finalWord = _result.slice(32, 32);
         uint256 _returnVal;
@@ -64,12 +64,12 @@ contract MulticallTest is DSTest, Multicall, Utils {
         storeA.set(123);
         storeB.set(321);
         bytes memory _data = toBytesUint(2)
-            .concat(toBytesAddress(storeA))
+            .concat(toBytesAddress(address(storeA)))
             .concat(toBytesUint(1))
             .concat(toBytesUint(64))
             .concat(toBytesUint(4))
             .concat(abi.encodeWithSignature("get()"))
-            .concat(toBytesAddress(storeB))
+            .concat(toBytesAddress(address(storeB)))
             .concat(toBytesUint(1))
             .concat(toBytesUint(64))
             .concat(toBytesUint(4))
@@ -92,7 +92,7 @@ contract MulticallTest is DSTest, Multicall, Utils {
     function test_single_call_single_return_single_arg() public {
         storeA.set(123);
         bytes memory _data = toBytesUint(1)
-            .concat(toBytesAddress(storeA))
+            .concat(toBytesAddress(address(storeA)))
             .concat(toBytesUint(1))
             .concat(toBytesUint(64))
             .concat(toBytesUint(36))
@@ -109,12 +109,12 @@ contract MulticallTest is DSTest, Multicall, Utils {
         storeA.set(123);
         storeB.set(321);
         bytes memory _data = toBytesUint(2)
-            .concat(toBytesAddress(storeA))
+            .concat(toBytesAddress(address(storeA)))
             .concat(toBytesUint(1))
             .concat(toBytesUint(64))
             .concat(toBytesUint(36))
             .concat(abi.encodeWithSignature("getAdd(uint256)", 1))
-            .concat(toBytesAddress(storeB))
+            .concat(toBytesAddress(address(storeB)))
             .concat(toBytesUint(1))
             .concat(toBytesUint(64))
             .concat(toBytesUint(36))
@@ -137,7 +137,7 @@ contract MulticallTest is DSTest, Multicall, Utils {
     function test_single_call_multi_return_no_args() public {
         storeA.set(123);
         bytes memory _data = toBytesUint(2)
-            .concat(toBytesAddress(storeA))
+            .concat(toBytesAddress(address(storeA)))
             .concat(toBytesUint(2))
             .concat(toBytesUint(64))
             .concat(toBytesUint(4))

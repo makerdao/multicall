@@ -6,11 +6,11 @@
  *      The library lets you concatenate, slice and type cast bytes arrays both in memory and storage.
  */
 
-pragma solidity ^0.4.25;
+pragma solidity >=0.4.25;
 
 
 library BytesLib {
-    function concat(bytes memory _preBytes, bytes memory _postBytes) internal pure returns (bytes) {
+    function concat(bytes memory _preBytes, bytes memory _postBytes) internal pure returns (bytes memory) {
         bytes memory tempBytes;
 
         assembly {
@@ -218,7 +218,7 @@ library BytesLib {
         }
     }
 
-    function slice(bytes _bytes, uint _start, uint _length) internal  pure returns (bytes) {
+    function slice(bytes memory _bytes, uint _start, uint _length) internal  pure returns (bytes memory) {
         require(_bytes.length >= (_start + _length));
 
         bytes memory tempBytes;
@@ -275,7 +275,7 @@ library BytesLib {
         return tempBytes;
     }
 
-    function toAddress(bytes _bytes, uint _start) internal  pure returns (address) {
+    function toAddress(bytes memory _bytes, uint _start) internal  pure returns (address) {
         require(_bytes.length >= (_start + 20));
         address tempAddress;
 
@@ -286,7 +286,7 @@ library BytesLib {
         return tempAddress;
     }
 
-    function toUint(bytes _bytes, uint _start) internal  pure returns (uint256) {
+    function toUint(bytes memory _bytes, uint _start) internal  pure returns (uint256) {
         require(_bytes.length >= (_start + 32));
         uint256 tempUint;
 
@@ -297,7 +297,7 @@ library BytesLib {
         return tempUint;
     }
 
-    function toBytes32(bytes _bytes, uint _start) internal  pure returns (bytes32) {
+    function toBytes32(bytes memory _bytes, uint _start) internal  pure returns (bytes32) {
         require(_bytes.length >= (_start + 32));
         bytes32 tempBytes32;
 

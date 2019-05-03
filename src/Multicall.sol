@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity >=0.4.25;
 
 /// @title Multicall - Aggregate multiple constant function call results into one
 /// @author Michael Elliot - <mike@makerdao.com>
@@ -21,7 +21,7 @@ contract Multicall {
                 let _retLen     := mul(mload(add(data, add(cur, 0x20))), 0x20)
                 let _dataLength := mload(add(data, add(cur, 0x60)))
                 let _data       := add(data, add(cur, 0x80))
-                if eq(call(gas, _target, 0, _data, _dataLength, ptr, _retLen), 0)
+                if eq(staticcall(gas, _target, _data, _dataLength, ptr, _retLen), 0)
                     { revert(0, 0) }
                 for { let offset := 0 } lt(offset, _retLen) { offset := add(offset, 0x20) }
                     { mstore(add(results, add(mul(inc, 0x20), offset)), mload(add(ptr, offset))) }
