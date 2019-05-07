@@ -1,8 +1,8 @@
-pragma solidity >=0.4.25;
+pragma experimental ABIEncoderV2;
+pragma solidity >=0.5.0;
 
 import "ds-test/test.sol";
 import "./Multicall.sol";
-import "./BytesLib.sol";
 
 contract Store {
     uint256 internal val;
@@ -12,22 +12,9 @@ contract Store {
     function getAdd(uint256 _val) public view returns (uint256) { return val + _val; }
 }
 
-contract Utils {
-    function toBytesUint(uint256 x) public pure returns (bytes memory b) {
-        b = new bytes(32);
-        assembly { mstore(add(b, 32), x) }
-    }
-
-    function toBytesAddress(address x) public pure returns (bytes memory b) {
-        b = new bytes(32);
-        assembly { mstore(add(b, 32), x) }
-    }
-}
-
 // We inherit from Multicall rather than deploy an instance because solidity
 // can't return dynamically sized byte arrays from external contracts
-contract MulticallTest is DSTest, Multicall, Utils {
-    using BytesLib for bytes;
+contract MulticallTest is DSTest, Multicall {
 
     Store public storeA;
     Store public storeB;
@@ -47,112 +34,97 @@ contract MulticallTest is DSTest, Multicall, Utils {
 
     function test_single_call_single_return_no_args() public {
         storeA.set(123);
-        bytes memory _data = toBytesUint(1)             // total number of return vals
-            .concat(toBytesAddress(address(storeA)))    // target address
-            .concat(toBytesUint(1))                     // number return vals for the next call
-            .concat(toBytesUint(64))                    // location of calldata
-            .concat(toBytesUint(4))                     // length of call data
-            .concat(abi.encodeWithSignature("get()"));  // method selector
-        bytes memory _result    = aggregate(_data);
-        bytes memory _finalWord = _result.slice(32, 32);
+
+        Call[] memory _calls = new Call[](1);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("get()");
+
+        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _word = _returnData[0];
         uint256 _returnVal;
-        assembly { _returnVal := mload(add(0x20, _finalWord)) }
+        assembly { _returnVal := mload(add(0x20, _word)) }
+
         assertEq(_returnVal, 123);
     }
 
     function test_multi_call_single_return_no_args() public {
         storeA.set(123);
         storeB.set(321);
-        bytes memory _data = toBytesUint(2)
-            .concat(toBytesAddress(address(storeA)))
-            .concat(toBytesUint(1))
-            .concat(toBytesUint(64))
-            .concat(toBytesUint(4))
-            .concat(abi.encodeWithSignature("get()"))
-            .concat(toBytesAddress(address(storeB)))
-            .concat(toBytesUint(1))
-            .concat(toBytesUint(64))
-            .concat(toBytesUint(4))
-            .concat(abi.encodeWithSignature("get()"));
 
-        bytes memory _result     = aggregate(_data);
-        bytes memory _secondWord = _result.slice(32, 32);
-        bytes memory _finalWord  = _result.slice(64, 32);
+        Call[] memory _calls = new Call[](2);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("get()");
+        _calls[1].target = address(storeB);
+        _calls[1].callData = abi.encodeWithSignature("get()");
 
+        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _wordA = _returnData[0];
+        bytes memory _wordB = _returnData[1];
         uint256 _returnValA;
         uint256 _returnValB;
-        assembly {
-            _returnValA := mload(add(0x20, _secondWord))
-            _returnValB := mload(add(0x20, _finalWord))
-        }
+        assembly { _returnValA := mload(add(0x20, _wordA)) }
+        assembly { _returnValB := mload(add(0x20, _wordB)) }
+
         assertEq(_returnValA, 123);
         assertEq(_returnValB, 321);
     }
 
     function test_single_call_single_return_single_arg() public {
         storeA.set(123);
-        bytes memory _data = toBytesUint(1)
-            .concat(toBytesAddress(address(storeA)))
-            .concat(toBytesUint(1))
-            .concat(toBytesUint(64))
-            .concat(toBytesUint(36))
-            .concat(abi.encodeWithSignature("getAdd(uint256)", 1));
 
-        bytes memory _result    = aggregate(_data);
-        bytes memory _finalWord = _result.slice(32, 32);
+        Call[] memory _calls = new Call[](1);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("getAdd(uint256)", 1);
+
+        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _word = _returnData[0];
         uint256 _returnVal;
-        assembly { _returnVal := mload(add(0x20, _finalWord)) }
+        assembly { _returnVal := mload(add(0x20, _word)) }
+
         assertEq(_returnVal, 124);
     }
 
     function test_multi_call_single_return_single_arg() public {
         storeA.set(123);
         storeB.set(321);
-        bytes memory _data = toBytesUint(2)
-            .concat(toBytesAddress(address(storeA)))
-            .concat(toBytesUint(1))
-            .concat(toBytesUint(64))
-            .concat(toBytesUint(36))
-            .concat(abi.encodeWithSignature("getAdd(uint256)", 1))
-            .concat(toBytesAddress(address(storeB)))
-            .concat(toBytesUint(1))
-            .concat(toBytesUint(64))
-            .concat(toBytesUint(36))
-            .concat(abi.encodeWithSignature("getAdd(uint256)", 1));
 
-        bytes memory _result     = aggregate(_data);
-        bytes memory _secondWord = _result.slice(32, 32);
-        bytes memory _finalWord  = _result.slice(64, 32);
+        Call[] memory _calls = new Call[](2);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("getAdd(uint256)", 1);
+        _calls[1].target = address(storeB);
+        _calls[1].callData = abi.encodeWithSignature("getAdd(uint256)", 1);
 
+        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _wordA = _returnData[0];
+        bytes memory _wordB = _returnData[1];
         uint256 _returnValA;
         uint256 _returnValB;
-        assembly {
-            _returnValA := mload(add(0x20, _secondWord))
-            _returnValB := mload(add(0x20, _finalWord))
-        }
+        assembly { _returnValA := mload(add(0x20, _wordA)) }
+        assembly { _returnValB := mload(add(0x20, _wordB)) }
+
         assertEq(_returnValA, 124);
         assertEq(_returnValB, 322);
     }
 
     function test_single_call_multi_return_no_args() public {
         storeA.set(123);
-        bytes memory _data = toBytesUint(2)
-            .concat(toBytesAddress(address(storeA)))
-            .concat(toBytesUint(2))
-            .concat(toBytesUint(64))
-            .concat(toBytesUint(4))
-            .concat(abi.encodeWithSignature("getAnd10()"));
 
-        bytes memory _result     = aggregate(_data);
-        bytes memory _secondWord = _result.slice(32, 32);
-        bytes memory _finalWord  = _result.slice(64, 32);
+        Call[] memory _calls = new Call[](1);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("getAnd10()");
 
+        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _words = _returnData[0];
         uint256 _returnValA1;
         uint256 _returnValA2;
-        assembly {
-            _returnValA1 := mload(add(0x20, _secondWord))
-            _returnValA2 := mload(add(0x20, _finalWord))
-        }
+        assembly { _returnValA1 := mload(add(0x20, _words)) }
+        assembly { _returnValA2 := mload(add(0x40, _words)) }
+
         assertEq(_returnValA1, 123);
         assertEq(_returnValA2, 10);
     }
