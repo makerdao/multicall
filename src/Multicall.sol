@@ -5,7 +5,7 @@ pragma solidity >=0.4.25;
 /// @author Joshua Levine - <joshua@makerdao.com>
 
 contract Multicall {
-    function aggregate(bytes memory data) public view returns (bytes memory) {
+    function aggregate(bytes memory data) public returns (bytes memory) {
         uint256 malloc;
         assembly { malloc := add(mul(mload(add(data, 0x20)), 0x20), 0x20) }
         bytes memory results = new bytes(malloc);
@@ -21,7 +21,7 @@ contract Multicall {
                 let _retLen     := mul(mload(add(data, add(cur, 0x20))), 0x20)
                 let _dataLength := mload(add(data, add(cur, 0x60)))
                 let _data       := add(data, add(cur, 0x80))
-                if eq(staticcall(gas, _target, _data, _dataLength, ptr, _retLen), 0)
+                if eq(call(gas, _target, 0, _data, _dataLength, ptr, _retLen), 0)
                     { revert(0, 0) }
                 for { let offset := 0 } lt(offset, _retLen) { offset := add(offset, 0x20) }
                     { mstore(add(results, add(mul(inc, 0x20), offset)), mload(add(ptr, offset))) }
