@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity >=0.4.25;
 
 /// @title Multicall Helper Functions
 /// @notice These helper functions are provided in a separate contract because the main multicall contract can't call into itself

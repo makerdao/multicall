@@ -1,11 +1,11 @@
-pragma solidity ^0.4.25;
+pragma solidity >=0.4.25;
 
 /// @title Multicall - Aggregate multiple constant function call results into one
 /// @author Michael Elliot - <mike@makerdao.com>
 /// @author Joshua Levine - <joshua@makerdao.com>
 
 contract Multicall {
-    function aggregate(bytes memory data) public view returns (bytes memory) {
+    function aggregate(bytes memory data) public returns (bytes memory) {
         uint256 malloc;
         assembly { malloc := add(mul(mload(add(data, 0x20)), 0x20), 0x20) }
         bytes memory results = new bytes(malloc);
