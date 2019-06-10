@@ -1,5 +1,5 @@
-pragma experimental ABIEncoderV2;
 pragma solidity >=0.5.0;
+pragma experimental ABIEncoderV2;
 
 import "ds-test/test.sol";
 import "./Multicall.sol";
@@ -39,7 +39,7 @@ contract MulticallTest is DSTest, Multicall {
         _calls[0].target = address(storeA);
         _calls[0].callData = abi.encodeWithSignature("get()");
 
-        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+        (, bytes[] memory _returnData) = aggregate(_calls);
 
         bytes memory _word = _returnData[0];
         uint256 _returnVal;
@@ -58,7 +58,7 @@ contract MulticallTest is DSTest, Multicall {
         _calls[1].target = address(storeB);
         _calls[1].callData = abi.encodeWithSignature("get()");
 
-        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+        (, bytes[] memory _returnData) = aggregate(_calls);
 
         bytes memory _wordA = _returnData[0];
         bytes memory _wordB = _returnData[1];
@@ -78,7 +78,7 @@ contract MulticallTest is DSTest, Multicall {
         _calls[0].target = address(storeA);
         _calls[0].callData = abi.encodeWithSignature("getAdd(uint256)", 1);
 
-        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+        (, bytes[] memory _returnData) = aggregate(_calls);
 
         bytes memory _word = _returnData[0];
         uint256 _returnVal;
@@ -97,7 +97,7 @@ contract MulticallTest is DSTest, Multicall {
         _calls[1].target = address(storeB);
         _calls[1].callData = abi.encodeWithSignature("getAdd(uint256)", 1);
 
-        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+        (, bytes[] memory _returnData) = aggregate(_calls);
 
         bytes memory _wordA = _returnData[0];
         bytes memory _wordB = _returnData[1];
@@ -117,7 +117,7 @@ contract MulticallTest is DSTest, Multicall {
         _calls[0].target = address(storeA);
         _calls[0].callData = abi.encodeWithSignature("getAnd10()");
 
-        (uint256 _blockNumber, bytes[] memory _returnData) = aggregate(_calls);
+        (, bytes[] memory _returnData) = aggregate(_calls);
 
         bytes memory _words = _returnData[0];
         uint256 _returnValA1;
@@ -127,5 +127,24 @@ contract MulticallTest is DSTest, Multicall {
 
         assertEq(_returnValA1, 123);
         assertEq(_returnValA2, 10);
+
+    }
+
+    function test_helpers() public {
+        bytes32 blockHash = getBlockHash(510);
+        bytes32 lastBlockHash = getLastBlockHash();
+        uint256 timestamp = getCurrentBlockTimestamp();
+        uint256 difficulty = getCurrentBlockDifficulty();
+        uint256 gaslimit = getCurrentBlockGasLimit();
+        address coinbase = getCurrentBlockCoinbase();
+        uint256 balance = getEthBalance(address(this));
+
+        assertEq(blockHash, blockhash(510));
+        assertEq(lastBlockHash, blockhash(block.number - 1));
+        assertEq(timestamp, block.timestamp);
+        assertEq(difficulty, block.difficulty);
+        assertEq(gaslimit, block.gaslimit);
+        assertEq(coinbase, block.coinbase);
+        assertEq(balance, address(this).balance);
     }
 }
