@@ -1,34 +1,45 @@
-pragma solidity >=0.4.25;
+pragma solidity >=0.5.0;
+pragma experimental ABIEncoderV2;
 
-/// @title Multicall - Aggregate multiple constant function call results into one
-/// @author Michael Elliot - <mike@makerdao.com>
-/// @author Joshua Levine - <joshua@makerdao.com>
+/// @title Multicall - Aggregate results from multiple read-only function calls
+/// @author Michael Elliot <mike@makerdao.com>
+/// @author Joshua Levine <joshua@makerdao.com>
+/// @author Nick Johnson <arachnid@notdot.net>
 
 contract Multicall {
-    function aggregate(bytes memory data) public returns (bytes memory) {
-        uint256 malloc;
-        assembly { malloc := add(mul(mload(add(data, 0x20)), 0x20), 0x20) }
-        bytes memory results = new bytes(malloc);
-        uint256 _block = block.number;
-        assembly {
-            mstore(add(results, 0x20), _block)
-            let ptr := mload(0x40)
-            let cur := 0x40
-            let inc := 2
-            let len := mload(data)
-            for { } lt(cur, len) { } {
-                let _target     := mload(add(data, cur))
-                let _retLen     := mul(mload(add(data, add(cur, 0x20))), 0x20)
-                let _dataLength := mload(add(data, add(cur, 0x60)))
-                let _data       := add(data, add(cur, 0x80))
-                if eq(call(gas, _target, 0, _data, _dataLength, ptr, _retLen), 0)
-                    { revert(0, 0) }
-                for { let offset := 0 } lt(offset, _retLen) { offset := add(offset, 0x20) }
-                    { mstore(add(results, add(mul(inc, 0x20), offset)), mload(add(ptr, offset))) }
-                inc := add(inc, mload(add(data, add(cur, 0x20))))
-                cur := add(cur, add(0x80, _dataLength))
-            }
+    struct Call {
+        address target;
+        bytes callData;
+    }
+    function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {
+        blockNumber = block.number;
+        returnData = new bytes[](calls.length);
+        for(uint256 i = 0; i < calls.length; i++) {
+            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);
+            require(success);
+            returnData[i] = ret;
         }
-        return results;
+    }
+    // Helper functions
+    function getEthBalance(address addr) public view returns (uint256 balance) {
+        balance = addr.balance;
+    }
+    function getBlockHash(uint256 blockNumber) public view returns (bytes32 blockHash) {
+        blockHash = blockhash(blockNumber);
+    }
+    function getLastBlockHash() public view returns (bytes32 blockHash) {
+        blockHash = blockhash(block.number - 1);
+    }
+    function getCurrentBlockTimestamp() public view returns (uint256 timestamp) {
+        timestamp = block.timestamp;
+    }
+    function getCurrentBlockDifficulty() public view returns (uint256 difficulty) {
+        difficulty = block.difficulty;
+    }
+    function getCurrentBlockGasLimit() public view returns (uint256 gaslimit) {
+        gaslimit = block.gaslimit;
+    }
+    function getCurrentBlockCoinbase() public view returns (address coinbase) {
+        coinbase = block.coinbase;
     }
 }

@@ -1,4 +1,5 @@
-pragma solidity >=0.4.25;
+pragma solidity >=0.5.0;
+pragma experimental ABIEncoderV2;
 
 import "ds-test/test.sol";
 import "./Multicall.sol";
@@ -6,40 +7,17 @@ import "./Multicall.sol";
 contract Store {
     uint256 internal val;
     function set(uint256 _val) public { val = _val; }
-    function setAndGetValue(uint256 _val) public returns (uint256) { val = _val; return _val; }
     function get() public view returns (uint256) { return val; }
     function getAnd10() public view returns (uint256, uint256) { return (val, 10); }
     function getAdd(uint256 _val) public view returns (uint256) { return val + _val; }
 }
 
-contract Utils {
-    function toBytesUint(uint256 x) public pure returns (bytes memory b) {
-        b = new bytes(32);
-        assembly { mstore(add(b, 32), x) }
-    }
-
-    function toBytesAddress(address x) public pure returns (bytes memory b) {
-        b = new bytes(32);
-        assembly { mstore(add(b, 32), x) }
-    }
-}
-
 // We inherit from Multicall rather than deploy an instance because solidity
 // can't return dynamically sized byte arrays from external contracts
-contract MulticallTest is DSTest, Multicall, Utils {
+contract MulticallTest is DSTest, Multicall {
+
     Store public storeA;
     Store public storeB;
-
-    function getWordAsUint(bytes memory data, uint init) internal pure returns (uint ret) {
-        bytes memory word = new bytes(32);
-        for (uint i = init; i < init + 32; i++) {
-            word[i - init] = data[i];
-        }
-
-        assembly {
-            ret := mload(add(0x20, word))
-        }
-    }
 
     function setUp() public {
         storeA = new Store();
@@ -57,19 +35,16 @@ contract MulticallTest is DSTest, Multicall, Utils {
     function test_single_call_single_return_no_args() public {
         storeA.set(123);
 
-        bytes memory _data = abi.encodePacked(
-            uint(1),                                // total number of return vals
-            abi.encode(
-                uint(address(storeA)),              // target address
-                uint(1)                             // number return vals for the next call
-            ),
-            uint(64),                               // location of calldata
-            uint(4),                                // length of call data
-            bytes4(keccak256("get()"))              // method selector
-        );
+        Call[] memory _calls = new Call[](1);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("get()");
 
-        bytes memory _result = aggregate(_data);
-        uint _returnVal = getWordAsUint(_result, 32);
+        (, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _word = _returnData[0];
+        uint256 _returnVal;
+        assembly { _returnVal := mload(add(0x20, _word)) }
+
         assertEq(_returnVal, 123);
     }
 
@@ -77,27 +52,21 @@ contract MulticallTest is DSTest, Multicall, Utils {
         storeA.set(123);
         storeB.set(321);
 
-        bytes memory _data = abi.encodePacked(
-            uint(2),
-            abi.encode(
-                uint(address(storeA)),
-                uint(1)
-            ),
-            uint(64),
-            uint(4),
-            bytes4(keccak256("get()")),
-            abi.encode(
-                uint(address(storeB)),
-                uint(1)
-            ),
-            uint(64),
-            uint(4),
-            bytes4(keccak256("get()"))
-        );
+        Call[] memory _calls = new Call[](2);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("get()");
+        _calls[1].target = address(storeB);
+        _calls[1].callData = abi.encodeWithSignature("get()");
 
-        bytes memory _result = aggregate(_data);
-        uint _returnValA = getWordAsUint(_result, 32);
-        uint _returnValB = getWordAsUint(_result, 64);
+        (, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _wordA = _returnData[0];
+        bytes memory _wordB = _returnData[1];
+        uint256 _returnValA;
+        uint256 _returnValB;
+        assembly { _returnValA := mload(add(0x20, _wordA)) }
+        assembly { _returnValB := mload(add(0x20, _wordB)) }
+
         assertEq(_returnValA, 123);
         assertEq(_returnValB, 321);
     }
@@ -105,20 +74,16 @@ contract MulticallTest is DSTest, Multicall, Utils {
     function test_single_call_single_return_single_arg() public {
         storeA.set(123);
 
-        bytes memory _data = abi.encodePacked(
-            uint(1),
-            abi.encode(
-                uint(address(storeA)),
-                uint(1)
-            ),
-            uint(64),
-            uint(36),
-            bytes4(keccak256("getAdd(uint256)")),
-            uint(1)
-        );
+        Call[] memory _calls = new Call[](1);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("getAdd(uint256)", 1);
 
-        bytes memory _result = aggregate(_data);
-        uint _returnVal = getWordAsUint(_result, 32);
+        (, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _word = _returnData[0];
+        uint256 _returnVal;
+        assembly { _returnVal := mload(add(0x20, _word)) }
+
         assertEq(_returnVal, 124);
     }
 
@@ -126,29 +91,21 @@ contract MulticallTest is DSTest, Multicall, Utils {
         storeA.set(123);
         storeB.set(321);
 
-        bytes memory _data = abi.encodePacked(
-            uint(2),
-            abi.encode(
-                uint(address(storeA)),
-                uint(1)
-            ),
-            uint(64),
-            uint(36),
-            bytes4(keccak256("getAdd(uint256)")),
-            uint(1),
-            abi.encode(
-                uint(address(storeB)),
-                uint(1)
-            ),
-            uint(64),
-            uint(36),
-            bytes4(keccak256("getAdd(uint256)")),
-            uint(1)
-        );
+        Call[] memory _calls = new Call[](2);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("getAdd(uint256)", 1);
+        _calls[1].target = address(storeB);
+        _calls[1].callData = abi.encodeWithSignature("getAdd(uint256)", 1);
 
-        bytes memory _result = aggregate(_data);
-        uint _returnValA = getWordAsUint(_result, 32);
-        uint _returnValB = getWordAsUint(_result, 64);
+        (, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _wordA = _returnData[0];
+        bytes memory _wordB = _returnData[1];
+        uint256 _returnValA;
+        uint256 _returnValB;
+        assembly { _returnValA := mload(add(0x20, _wordA)) }
+        assembly { _returnValB := mload(add(0x20, _wordB)) }
+
         assertEq(_returnValA, 124);
         assertEq(_returnValB, 322);
     }
@@ -156,39 +113,38 @@ contract MulticallTest is DSTest, Multicall, Utils {
     function test_single_call_multi_return_no_args() public {
         storeA.set(123);
 
-        bytes memory _data = abi.encodePacked(
-            uint(2),
-            abi.encode(
-                uint(address(storeA)),
-                uint(2)
-            ),
-            uint(64),
-            uint(4),
-            bytes4(keccak256("getAnd10()"))
-        );
+        Call[] memory _calls = new Call[](1);
+        _calls[0].target = address(storeA);
+        _calls[0].callData = abi.encodeWithSignature("getAnd10()");
 
-        bytes memory _result = aggregate(_data);
-        uint _returnValA = getWordAsUint(_result, 32);
-        uint _returnValB = getWordAsUint(_result, 64);
-        assertEq(_returnValA, 123);
-        assertEq(_returnValB, 10);
+        (, bytes[] memory _returnData) = aggregate(_calls);
+
+        bytes memory _words = _returnData[0];
+        uint256 _returnValA1;
+        uint256 _returnValA2;
+        assembly { _returnValA1 := mload(add(0x20, _words)) }
+        assembly { _returnValA2 := mload(add(0x40, _words)) }
+
+        assertEq(_returnValA1, 123);
+        assertEq(_returnValA2, 10);
+
     }
 
-    function test_single_call_dynamic_value() public {
-        bytes memory _data = abi.encodePacked(
-            uint(1),
-            abi.encode(
-                uint(address(storeA)),
-                uint(1)
-            ),
-            uint(64),
-            uint(36),
-            bytes4(keccak256("setAndGetValue(uint256)")),
-            uint(25)
-        );
+    function test_helpers() public {
+        bytes32 blockHash = getBlockHash(510);
+        bytes32 lastBlockHash = getLastBlockHash();
+        uint256 timestamp = getCurrentBlockTimestamp();
+        uint256 difficulty = getCurrentBlockDifficulty();
+        uint256 gaslimit = getCurrentBlockGasLimit();
+        address coinbase = getCurrentBlockCoinbase();
+        uint256 balance = getEthBalance(address(this));
 
-        bytes memory _result = aggregate(_data);
-        uint _returnVal = getWordAsUint(_result, 32);
-        assertEq(_returnVal, 25);
+        assertEq(blockHash, blockhash(510));
+        assertEq(lastBlockHash, blockhash(block.number - 1));
+        assertEq(timestamp, block.timestamp);
+        assertEq(difficulty, block.difficulty);
+        assertEq(gaslimit, block.gaslimit);
+        assertEq(coinbase, block.coinbase);
+        assertEq(balance, address(this).balance);
     }
 }
