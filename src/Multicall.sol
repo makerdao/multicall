@@ -68,6 +68,7 @@ contract Multicall2 {
         gaslimit = block.gaslimit;
     }
     function getCurrentBlockTimestamp() public view returns (uint256 timestamp) {
+        // solium-disable-next-line security/no-block-members
         timestamp = block.timestamp;
     }
     function getEthBalance(address addr) public view returns (uint256 balance) {
