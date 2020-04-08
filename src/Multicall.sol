@@ -38,7 +38,7 @@ contract Multicall2 {
         }
     }
 
-    // old aggregate method. requires all calls to succeed. use block_and_aggregate instead
+    // old aggregate method. requires all calls to succeed
     function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {
         blockNumber = block.number;
         returnData = new bytes[](calls.length);
