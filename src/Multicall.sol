@@ -12,33 +12,13 @@ contract Multicall2 {
         address target;
         bytes callData;
     }
-
     struct Result {
         bool success;
-        bytes ret;
+        bytes returnData;
     }
 
-    // public functions
-    function try_block_and_aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {
-        blockNumber = block.number;
-        blockHash = blockhash(blockNumber);
-        returnData = try_aggregate(calls);
-    }
-    function try_aggregate(Call[] memory calls) public returns (Result[] memory returnData) {
-        returnData = new Result[](calls.length);
-
-        for(uint256 i = 0; i < calls.length; i++) {
-            // we use low level calls to intionally allow calling arbitrary functions.
-            // solium-disable-next-line security/no-low-level-calls
-            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);
-
-            // TODO? optionally require(success, "Multicall2 aggregate: call failed");
-
-            returnData[i] = Result(success, ret);
-        }
-    }
-
-    // old aggregate method. requires all calls to succeed
+    // Multiple calls in one! (Deprecated because it lacks blockHash)
+    // Reverts if any call fails.
     function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {
         blockNumber = block.number;
         returnData = new bytes[](calls.length);
@@ -50,6 +30,47 @@ contract Multicall2 {
             returnData[i] = ret;
         }
     }
+
+    // Multiple calls in one!
+    // Reverts if any call fails.
+    // Use when you are querying the latest block and need all the calls to succeed.
+    // Check the hash to protect yourself from re-orgs!
+    function block_and_aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {
+        blockNumber = block.number;
+        blockHash = blockhash(blockNumber);
+        returnData = try_aggregate(true, calls);
+    }
+
+    // Multiple calls in one!
+    // This does *not* revert if a call fails. Check the success bool before using the returnData.
+    // Use when you are querying the latest block and only need some of the calls to succeed.
+    // Returns the block and hash so you can protect yourself from re-orgs.
+    function try_block_and_aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {
+        blockNumber = block.number;
+        blockHash = blockhash(blockNumber);
+        returnData = try_aggregate(false, calls);
+    }
+
+    // Multiple calls in one!
+    // This does *not* revert if a call fails. Check the success bool before using the returnData.
+    // Use when you are querying a specific block number and hash.
+    function try_aggregate(bool require_success, Call[] memory calls) public returns (Result[] memory returnData) {
+        returnData = new Result[](calls.length);
+
+        for(uint256 i = 0; i < calls.length; i++) {
+            // we use low level calls to intionally allow calling arbitrary functions.
+            // solium-disable-next-line security/no-low-level-calls
+            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);
+
+            if (require_success) {
+                // TODO: give a more useful message about specifically which call failed
+                require(success, "Multicall2 aggregate: call failed");
+            }
+
+            returnData[i] = Result(success, ret);
+        }
+    }
+
 
     // Helper functions
     function getBlockHash() public view returns (bytes32 blockHash) {
