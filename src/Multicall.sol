@@ -19,18 +19,35 @@ contract Multicall2 {
     }
 
     // public functions
-    function block_and_aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {
+    function try_block_and_aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {
         blockNumber = block.number;
         blockHash = blockhash(blockNumber);
-        returnData = aggregate(calls);
+        returnData = try_aggregate(calls);
     }
-    function aggregate(Call[] memory calls) public returns (Result[] memory returnData) {
+    function try_aggregate(Call[] memory calls) public returns (Result[] memory returnData) {
         returnData = new Result[](calls.length);
 
         for(uint256 i = 0; i < calls.length; i++) {
+            // we use low level calls to intionally allow calling arbitrary functions.
+            // solium-disable-next-line security/no-low-level-calls
             (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);
 
+            // TODO? optionally require(success, "Multicall2 aggregate: call failed");
+
             returnData[i] = Result(success, ret);
+        }
+    }
+
+    // old aggregate method. requires all calls to succeed. use block_and_aggregate instead
+    function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {
+        blockNumber = block.number;
+        returnData = new bytes[](calls.length);
+        for(uint256 i = 0; i < calls.length; i++) {
+            // we use low level calls to intionally allow calling arbitrary functions.
+            // solium-disable-next-line security/no-low-level-calls
+            (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);
+            require(success, "Multicall2 aggregate: call failed");
+            returnData[i] = ret;
         }
     }
 
