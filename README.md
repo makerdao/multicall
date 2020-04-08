@@ -12,7 +12,7 @@ out-of-date node).
 For use in front-end dapps, this smart contract is intended to be used with
 [Multicall.js](https://github.com/makerdao/multicall.js).
 
-### Contract Addresses
+### Contract Addresses for Multicall V1
 | Chain   | Address |
 | ------- | ------- |
 | Mainnet | [0xeefba1e63905ef1d7acba5a8513c70307c1ce441](https://etherscan.io/address/0xeefba1e63905ef1d7acba5a8513c70307c1ce441#contracts) |
