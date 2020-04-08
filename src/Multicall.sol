@@ -17,9 +17,12 @@ contract Multicall2 {
         bytes returnData;
     }
 
-    // Multiple calls in one! (Deprecated because it lacks blockHash)
+    // Multiple calls in one! (Replaced by block_and_aggregate and try_block_and_aggregate)
     // Reverts if any call fails.
-    function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {
+    function aggregate(Call[] memory calls)
+        public
+        returns (uint256 blockNumber, bytes[] memory returnData)
+    {
         blockNumber = block.number;
         returnData = new bytes[](calls.length);
         for(uint256 i = 0; i < calls.length; i++) {
@@ -35,26 +38,35 @@ contract Multicall2 {
     // Reverts if any call fails.
     // Use when you are querying the latest block and need all the calls to succeed.
     // Check the hash to protect yourself from re-orgs!
-    function block_and_aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {
-        blockNumber = block.number;
-        blockHash = blockhash(blockNumber);
-        returnData = try_aggregate(true, calls);
+    function block_and_aggregate(Call[] memory calls)
+        public
+        returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData)
+    {
+        (blockNumber, blockHash, returnData) = try_block_and_aggregate(true, calls);
     }
 
     // Multiple calls in one!
-    // This does *not* revert if a call fails. Check the success bool before using the returnData.
-    // Use when you are querying the latest block and only need some of the calls to succeed.
+    // If `require_success == true`, this revert if a call fails.
+    // If `require_success == false`, failures are allowed. Check the success bool before using the returnData.
+    // Use when you are querying the latest block.
     // Returns the block and hash so you can protect yourself from re-orgs.
-    function try_block_and_aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData) {
+    function try_block_and_aggregate(bool require_success, Call[] memory calls)
+        public
+        returns (uint256 blockNumber, bytes32 blockHash, Result[] memory returnData)
+    {
         blockNumber = block.number;
         blockHash = blockhash(blockNumber);
-        returnData = try_aggregate(false, calls);
+        returnData = try_aggregate(require_success, calls);
     }
 
     // Multiple calls in one!
-    // This does *not* revert if a call fails. Check the success bool before using the returnData.
+    // If `require_success == true`, this revert if a call fails.
+    // If `require_success == false`, failures are allowed. Check the success bool before using the returnData.
     // Use when you are querying a specific block number and hash.
-    function try_aggregate(bool require_success, Call[] memory calls) public returns (Result[] memory returnData) {
+    function try_aggregate(bool require_success, Call[] memory calls)
+        public
+        returns (Result[] memory returnData)
+    {
         returnData = new Result[](calls.length);
 
         for(uint256 i = 0; i < calls.length; i++) {
