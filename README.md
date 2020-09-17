@@ -21,3 +21,4 @@ For use in front-end dapps, this smart contract is intended to be used with
 | Görli   | [0x77dca2c955b15e9de4dbbcf1246b4b85b651e50e](https://goerli.etherscan.io/address/0x77dca2c955b15e9de4dbbcf1246b4b85b651e50e#contracts) |
 | Ropsten | [0x53c43764255c17bd724f74c4ef150724ac50a3ed](https://ropsten.etherscan.io/address/0x53c43764255c17bd724f74c4ef150724ac50a3ed#code) |
 | xDai    | [0xb5b692a88bdfc81ca69dcb1d924f59f0413a602a](https://blockscout.com/poa/dai/address/0xb5b692a88bdfc81ca69dcb1d924f59f0413a602a) |
+| Bnbtestnet    | [0xCDe46C878bF1620ABdbB89ED67bf4A11Ded43F14](https://explorer.binance.org/smart-testnet/address/0xCDe46C878bF1620ABdbB89ED67bf4A11Ded43F14) |
