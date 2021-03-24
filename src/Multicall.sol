@@ -11,12 +11,16 @@ contract Multicall {
         address target;
         bytes callData;
     }
-    function aggregate(Call[] memory calls) public returns (uint256 blockNumber, bytes[] memory returnData) {
+    function aggregate(Call[] memory calls, bool _checkCall) public returns (uint256 blockNumber, bytes[] memory returnData) {
         blockNumber = block.number;
-        returnData = new bytes[](calls.length);
-        for(uint256 i = 0; i < calls.length; i++) {
+        uint256 cLen = calls.length;
+        returnData = new bytes[](cLen);
+        uint256 i;
+        for(i; i < cLen; i++) {
             (bool success, bytes memory ret) = calls[i].target.call(calls[i].callData);
-            require(success);
+            if (_checkCall) {
+                require(success, "Multicall: call failed");
+            }
             returnData[i] = ret;
         }
     }
