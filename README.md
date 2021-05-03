@@ -17,5 +17,12 @@ For use in front-end dapps, this smart contract is intended to be used with
 | ------- | ------- |
 | Beresheet | 0x4e30a26DF49321346079124Cb92a62b6DBE4D8Bb |
 
+### Deploying
+
+```
+yarn
+npx truffle  --privkey=1111111111111111111111111111111111111111111111111111111111111111 --network development migrate
+```
+
 ### License
 Multicall is MIT licensed.
