@@ -1,9 +1,16 @@
 {
-  "devDependencies": {
-    "truffle": "^5.0.5"
+  "scripts": {
+    "compile": "npx hardhat compile --force",
+    "deploy:ganache": "node deploy/deploy_multicall.js --network ganache",
+    "deploy:local": "node deploy/deploy_multicall.js --network local",
+    "deploy:rinkeby": "node deploy/deploy_multicall.js --network rinkeby",
+    "deploy:beresheet": "node deploy/deploy_multicall.js --network beresheet",
+    "deploy:edgeware": "node deploy/deploy_multicall.js --network edgeware"
   },
-  "dependencies": {
-    "@truffle/hdwallet-provider": "^1.2.6"
+  "devDependencies": {
+  },
+  "dependencies": {    
+    "hardhat": "^2.3.0"
   },
   "repository": {
     "type": "git",
