@@ -20,7 +20,7 @@ For use in front-end dapps, this smart contract is intended to be used with
 
 ### Compile
 - `yarn compile`
-### Deploying
+### Deploy
 
 - `yarn deploy:rinkeby`
 - `yarn deploy:beresheet`
