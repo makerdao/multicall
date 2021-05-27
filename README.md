@@ -9,8 +9,8 @@ and returning the block number the values are from (giving them important
 context so that results from old blocks can be ignored if they're from an
 out-of-date node).
 
-For use in front-end dapps, this smart contract is intended to be used with
-[Multicall.js](https://github.com/makerdao/multicall.js).
+This smart contract is intended to be used with
+[Multicall.js](https://github.com/makerdao/multicall.js) in front-end dapps.
 
 ### Multicall Contract Addresses
 | Chain   | Address |
@@ -34,3 +34,14 @@ Multicall2 is the same as Multicall, but provides addition functions that allow 
 | Rinkeby | [0x5ba1e12693dc8f9c48aad8770482f4739beed696](https://rinkeby.etherscan.io/address/0x5ba1e12693dc8f9c48aad8770482f4739beed696#contracts) |
 | Görli   | [0x5ba1e12693dc8f9c48aad8770482f4739beed696](https://goerli.etherscan.io/address/0x5ba1e12693dc8f9c48aad8770482f4739beed696#contracts) |
 | Ropsten | [0x5ba1e12693dc8f9c48aad8770482f4739beed696](https://ropsten.etherscan.io/address/0x5ba1e12693dc8f9c48aad8770482f4739beed696#code) |
+
+### Third-Party Deployments
+
+The following addresses have been submitted by external contributors and have not been vetted by Multicall maintainers.
+
+| Chain   | Address |
+| ------- | ------- |
+| RSK Mainnet   | [0x6c62bf5440de2cb157205b15c424bceb5c3368f5](https://explorer.rsk.co/address/0x6c62bf5440de2cb157205b15c424bceb5c3368f5) |
+| RSK Testnet   | [0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103](https://explorer.testnet.rsk.co/address/0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103) |
+| BSC Mainnet   | [0x41263cba59eb80dc200f3e2544eda4ed6a90e76c](https://bscscan.com/address/0x41263cba59eb80dc200f3e2544eda4ed6a90e76c) |
+| BNB Testnet   | [0xCDe46C878bF1620ABdbB89ED67bf4A11Ded43F14](https://explorer.binance.org/smart-testnet/address/0xCDe46C878bF1620ABdbB89ED67bf4A11Ded43F14) |
