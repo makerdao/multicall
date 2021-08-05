@@ -45,3 +45,5 @@ The following addresses have been submitted by external contributors and have no
 | RSK Testnet   | [0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103](https://explorer.testnet.rsk.co/address/0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103) |
 | BSC Mainnet   | [0x41263cba59eb80dc200f3e2544eda4ed6a90e76c](https://bscscan.com/address/0x41263cba59eb80dc200f3e2544eda4ed6a90e76c) |
 | BSC Testnet   | [0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C](https://testnet.bscscan.com/address/0xae11c5b5f29a6a25e955f0cb8ddcc416f522af5c) |
+| Polygon Mainnet   | [0x5a616d3195715f2783bf51b46193b5dc8e867717](https://polygonscan.com/address/0x5a616d3195715f2783bf51b46193b5dc8e867717) |
+| Polygon Testnet   | [0xcB0cbcE06860f6C30C62560f5eFBF918150e056E](https://mumbai.polygonscan.com/address/0xcB0cbcE06860f6C30C62560f5eFBF918150e056E) 
