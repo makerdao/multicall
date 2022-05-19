@@ -35,7 +35,7 @@ Multicall2 is the same as Multicall, but provides addition functions that allow 
 | Rinkeby | [0x5ba1e12693dc8f9c48aad8770482f4739beed696](https://rinkeby.etherscan.io/address/0x5ba1e12693dc8f9c48aad8770482f4739beed696#contracts) |
 | Görli   | [0x5ba1e12693dc8f9c48aad8770482f4739beed696](https://goerli.etherscan.io/address/0x5ba1e12693dc8f9c48aad8770482f4739beed696#contracts) |
 | Ropsten | [0x5ba1e12693dc8f9c48aad8770482f4739beed696](https://ropsten.etherscan.io/address/0x5ba1e12693dc8f9c48aad8770482f4739beed696#code) |
-
+| Klaytn Cypress | [0x1b15be2d0bc676d2633ec729eda11d1469c11eae] (https://scope.klaytn.com/account/0x1b15be2d0bc676d2633ec729eda11d1469c11eae)
 ### Third-Party Deployments
 
 The following addresses have been submitted by external contributors and have not been vetted by Multicall maintainers.
