@@ -46,3 +46,5 @@ The following addresses have been submitted by external contributors and have no
 | BSC Mainnet   | [0x41263cba59eb80dc200f3e2544eda4ed6a90e76c](https://bscscan.com/address/0x41263cba59eb80dc200f3e2544eda4ed6a90e76c) |
 | BSC Testnet   | [0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C](https://testnet.bscscan.com/address/0xae11c5b5f29a6a25e955f0cb8ddcc416f522af5c) |
 | Telos Mainnet | [0x53dC7535028e2fcaCa0d847AD108b9240C0801b1](https://www.teloscan.io/address/0x53dC7535028e2fcaCa0d847AD108b9240C0801b1) |
+| Boba Mainnet  | [0x96C8a3cad47D0249cF20dD5C6B0Fa0c711a310f5](https://bobascan.com/address/0x96C8a3cad47D0249cF20dD5C6B0Fa0c711a310f5) |
+| Boba MainnetV2| [0x96a5Eac3fa7BB87c61881Dc093884C06719Bcd1E](https://bobascan.com/address/0x96a5Eac3fa7BB87c61881Dc093884C06719Bcd1E) |
