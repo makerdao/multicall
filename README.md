@@ -48,3 +48,4 @@ The following addresses have been submitted by external contributors and have no
 | Telos Mainnet | [0x53dC7535028e2fcaCa0d847AD108b9240C0801b1](https://www.teloscan.io/address/0x53dC7535028e2fcaCa0d847AD108b9240C0801b1) |
 | Boba Mainnet  | [0x96C8a3cad47D0249cF20dD5C6B0Fa0c711a310f5](https://bobascan.com/address/0x96C8a3cad47D0249cF20dD5C6B0Fa0c711a310f5) |
 | Boba MainnetV2| [0x96a5Eac3fa7BB87c61881Dc093884C06719Bcd1E](https://bobascan.com/address/0x96a5Eac3fa7BB87c61881Dc093884C06719Bcd1E) |
+| Oasis Emerald | [0xDA294FDE76F7369ed93D7C7A3FD2d5277C2003B5](https://explorer.emerald.oasis.dev/address/0xDA294FDE76F7369ed93D7C7A3FD2d5277C2003B5/transactions) |
