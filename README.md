@@ -1,6 +1,6 @@
 # DEPRECATED
 
-_This repository is no longer maintained. An active version can be found at https://github.com/mds1/multicall. Note that this is an external repository not maintained by the MakerDAO Protocol Engineering Core Unit._
+_This repository is no longer maintained. An active version can be found at https://github.com/mds1/multicall. Note that this is an external repository not maintained by any entity funded or directed by MakerDAO governance._
 
 # Multicall <img width="100" align="right" alt="Multicall" src="https://user-images.githubusercontent.com/304108/55666937-320cb180-5888-11e9-907b-48ba66150523.png" />
 
