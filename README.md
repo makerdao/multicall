@@ -43,9 +43,11 @@ Multicall2 is the same as Multicall, but provides addition functions that allow 
 
 The following addresses have been submitted by external contributors and have not been vetted by Multicall maintainers.
 
-| Chain   | Address |
-| ------- | ------- |
-| RSK Mainnet   | [0x6c62bf5440de2cb157205b15c424bceb5c3368f5](https://explorer.rsk.co/address/0x6c62bf5440de2cb157205b15c424bceb5c3368f5) |
-| RSK Testnet   | [0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103](https://explorer.testnet.rsk.co/address/0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103) |
-| BSC Mainnet   | [0x41263cba59eb80dc200f3e2544eda4ed6a90e76c](https://bscscan.com/address/0x41263cba59eb80dc200f3e2544eda4ed6a90e76c) |
-| BSC Testnet   | [0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C](https://testnet.bscscan.com/address/0xae11c5b5f29a6a25e955f0cb8ddcc416f522af5c) |
+| Chain   | Address | Version |
+| ------- | ------- | ------- |
+| RSK Mainnet   | [0x6c62bf5440de2cb157205b15c424bceb5c3368f5](https://explorer.rsk.co/address/0x6c62bf5440de2cb157205b15c424bceb5c3368f5) | Multicall |
+| RSK Testnet   | [0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103](https://explorer.testnet.rsk.co/address/0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103) | Multicall |
+| BSC Mainnet   | [0x41263cba59eb80dc200f3e2544eda4ed6a90e76c](https://bscscan.com/address/0x41263cba59eb80dc200f3e2544eda4ed6a90e76c) | Multicall |
+| BSC Testnet   | [0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C](https://testnet.bscscan.com/address/0xae11c5b5f29a6a25e955f0cb8ddcc416f522af5c) | Multicall |
+| Matic Mainnet   | [0x275617327c958bD06b5D6b871E7f491D76113dd8](https://polygonscan.com/address/0x275617327c958bD06b5D6b871E7f491D76113dd8) | Multicall2 |
+| Matic Testnet   | [0xe9939e7Ea7D7fb619Ac57f648Da7B1D425832631](https://mumbai.polygonscan.com/address/0xe9939e7Ea7D7fb619Ac57f648Da7B1D425832631) | Multicall2 |
