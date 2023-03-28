@@ -49,3 +49,5 @@ The following addresses have been submitted by external contributors and have no
 | RSK Testnet   | [0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103](https://explorer.testnet.rsk.co/address/0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103) |
 | BSC Mainnet   | [0x41263cba59eb80dc200f3e2544eda4ed6a90e76c](https://bscscan.com/address/0x41263cba59eb80dc200f3e2544eda4ed6a90e76c) |
 | BSC Testnet   | [0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C](https://testnet.bscscan.com/address/0xae11c5b5f29a6a25e955f0cb8ddcc416f522af5c) |
+| AVAXC Mainnet   | [0x8755b94F88D120AB2Cc13b1f6582329b067C760d](https://snowtrace.io/address/0x8755b94F88D120AB2Cc13b1f6582329b067C760d) |
+
