@@ -49,3 +49,11 @@ The following addresses have been submitted by external contributors and have no
 | RSK Testnet   | [0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103](https://explorer.testnet.rsk.co/address/0x9e469e1fc7fb4c5d17897b68eaf1afc9df39f103) |
 | BSC Mainnet   | [0x41263cba59eb80dc200f3e2544eda4ed6a90e76c](https://bscscan.com/address/0x41263cba59eb80dc200f3e2544eda4ed6a90e76c) |
 | BSC Testnet   | [0xae11C5B5f29A6a25e955F0CB8ddCc416f522AF5C](https://testnet.bscscan.com/address/0xae11c5b5f29a6a25e955f0cb8ddcc416f522af5c) |
+
+#### Multicall 2
+| Chain   | Address |
+| ------- | ------- |
+| BSC Mainnet  | [0xed386Fe855C1EFf2f843B910923Dd8846E45C5A4](https://bscscan.com/address/0xed386Fe855C1EFf2f843B910923Dd8846E45C5A4#code) |
+| BSC Testnet  | [0xed386Fe855C1EFf2f843B910923Dd8846E45C5A4](https://testnet.bscscan.com/address/0xed386Fe855C1EFf2f843B910923Dd8846E45C5A4#code) |
+| Matic        | [0xed386Fe855C1EFf2f843B910923Dd8846E45C5A4](https://polygonscan.com/address/0xed386Fe855C1EFf2f843B910923Dd8846E45C5A4#code) |
+| Mumbai       | [0xed386Fe855C1EFf2f843B910923Dd8846E45C5A4](https://mumbai.polygonscan.com/address/0xed386Fe855C1EFf2f843B910923Dd8846E45C5A4#code) |
